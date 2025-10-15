@@ -1,0 +1,65 @@
+using GymManagmentDAL.Data.Context;
+using GymManagmentDAL.Repositories.Interfaces;
+using GymManagmentDAL.Repositories.classes;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using GymManagmentDAL.Data.DataSeed;
+using GymManagmentBLL;
+namespace GymManagmentPL
+{
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+            var builder = WebApplication.CreateBuilder(args);
+
+            // Add services to the container.
+            builder.Services.AddControllersWithViews();
+
+            builder.Services.AddDbContext<GymDbContext>(options =>
+            {
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectionString"));
+            });
+
+            //builder.Services.AddScoped(typeof(IGenericRepo<>),typeof(GenericRepo<>));
+            //builder.Services.AddScoped<IPlanRepo,PlanRepo>();
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+            builder.Services.AddScoped<ISessionRepo, SessionRepo>();
+            builder.Services.AddAutoMapper(X =>X.AddProfile(new MappingProfiles()));
+
+            var app = builder.Build();
+
+            #region DataSeed _ MigrateDatabase
+            using var scope = app.Services.CreateScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<GymDbContext>();
+            var pendingMigrations = dbContext.Database.GetPendingMigrations();
+            if (pendingMigrations != null && pendingMigrations.Any())
+            {
+                dbContext.Database.Migrate();
+            }
+            GymDbContextSeeding.DataSeed(dbContext);
+            #endregion
+
+            // Configure the HTTP request pipeline.
+            if (!app.Environment.IsDevelopment())
+            {
+                app.UseExceptionHandler("/Home/Error");
+                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+                app.UseHsts();
+            }
+
+            app.UseHttpsRedirection();
+            app.UseRouting();
+
+            app.UseAuthorization();
+
+            app.MapStaticAssets();
+            app.MapControllerRoute(
+                name: "default",
+                pattern: "{controller=Home}/{action=Index}/{id?}")
+                .WithStaticAssets();
+
+            app.Run();
+        }
+    }
+}
