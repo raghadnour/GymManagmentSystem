@@ -74,6 +74,56 @@ namespace GymManagmentBLL.Service.Classes
             return sessionViewModel;
         }
 
+        public UpdateSessionViewModel? GetSessionForUpdate(int id)
+        {
+            var session = _unitOfWork.GetRepository<Session>().GetById(id);
+            if (session is null || !IsSessionAvailable(session))
+                return null;
+            var updateSessionViewModel = _mapper.Map<Session, UpdateSessionViewModel>(session);
+            
+            return updateSessionViewModel;
+        }
+
+        public bool UpdateSession(int id, UpdateSessionViewModel updateSessionViewModel)
+        {
+            try
+            {
+                var session = _unitOfWork.GetRepository<Session>().GetById(id);
+                if (session is null || !IsSessionAvailable(session) ||
+                    !IsTrainerExists(updateSessionViewModel.TrainerId) ||
+                    !IsValidTimeRange(updateSessionViewModel.StartTime, updateSessionViewModel.EndTime))
+                {
+                    return false;
+                }
+                var updatedSession = _mapper.Map(updateSessionViewModel, session);
+                updatedSession.UpdatedAt = DateTime.Now;
+                _unitOfWork.GetRepository<Session>().Update(updatedSession);
+                return _unitOfWork.SaveChanges() > 0;
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return false;
+            }
+        }
+        public bool RemoveSession(int id)
+        {
+            try
+            {
+                var session = _unitOfWork.GetRepository<Session>().GetById(id);
+                if (session is null || !IsSessionAvailableToDelete(session))
+                    return false;
+                _unitOfWork.GetRepository<Session>().Delete(session);
+                return _unitOfWork.SaveChanges() > 0;
+
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex);
+                return false;
+            }
+        }
 
         #region Helper
         bool IsTrainerExists(int trainerId)
@@ -88,6 +138,33 @@ namespace GymManagmentBLL.Service.Classes
         {
             return startTime < endTime;
         }
+
+        bool IsSessionAvailable(Session session)
+        {
+            if(session == null)
+                return false;
+            if(session.StartTime < DateTime.Now || session.EndTime < DateTime.Now)
+                return false;
+            if(session.Capacity <= _unitOfWork.SessionRepo.GetCountOfBookSlots(session.Id))
+                return false;
+            return true;
+        }
+        bool IsSessionAvailableToDelete(Session session)
+        {
+            if (session == null)
+                return false;
+            if (session.StartTime < DateTime.Now && session.EndTime > DateTime.Now)
+                return false;
+            if(session.StartTime > DateTime.Now)
+                return false;
+            if (session.Capacity <= _unitOfWork.SessionRepo.GetCountOfBookSlots(session.Id))
+                return false;
+            return true;
+        }
+
+
+
+
         #endregion
     }
 }
