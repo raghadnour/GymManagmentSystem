@@ -10,10 +10,10 @@ namespace GymManagmentBLL.Service.Interfaces
     public interface ITrainerService
     {
         IEnumerable<TrainersViewModel> GetAllTrainers();
-        TrainersViewModel? GetTrainerById(int id);
+        TrainersViewModel? GetTrainerDetails(int id);
         bool CreateTrainer(CreateTrainerViewModel trainer);
-        bool UpdateTrainer(int id, TrainerUpdateViewModel trainer);
-        TrainerUpdateViewModel? GetTrainerForUpdate(int id);
+        bool UpdateTrainerDetails(int id, TrainerUpdateViewModel trainer);
+        TrainerUpdateViewModel? GetTrainerToUpdate(int id);
 
         bool RemoveTrainer(int id);
     }

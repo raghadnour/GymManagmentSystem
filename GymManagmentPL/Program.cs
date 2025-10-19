@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using GymManagmentDAL.Data.DataSeed;
 using GymManagmentBLL;
+using GymManagmentBLL.Service.Interfaces;
+using GymManagmentBLL.Service.Classes;
 namespace GymManagmentPL
 {
     public class Program
@@ -25,7 +27,8 @@ namespace GymManagmentPL
             //builder.Services.AddScoped<IPlanRepo,PlanRepo>();
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             builder.Services.AddScoped<ISessionRepo, SessionRepo>();
-            builder.Services.AddAutoMapper(X =>X.AddProfile(new MappingProfiles()));
+            builder.Services.AddAutoMapper(X =>X.AddProfile(new MappingProfile()));
+            builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
 
             var app = builder.Build();
 

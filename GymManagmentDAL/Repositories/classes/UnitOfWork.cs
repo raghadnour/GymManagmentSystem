@@ -11,31 +11,30 @@ namespace GymManagmentDAL.Repositories.classes
 {
     public class UnitOfWork : IUnitOfWork
     {
-        private readonly GymDbContext _dbContext;
-        private readonly Dictionary<Type, object> _repositories = new();
-
-        public UnitOfWork(GymDbContext context, ISessionRepo sessionRepo)
-        {
-            _dbContext = context;
-            SessionRepo = sessionRepo;
-        }
-
         public ISessionRepo SessionRepo { get; }
 
-        public IGenericRepo<TEntity> GetRepository<TEntity>() where TEntity : BaseEntity, new()
+
+        private readonly Dictionary<string, object> repositories = [];
+        private readonly GymDbContext _dbContext;
+        public UnitOfWork(GymDbContext dbContext,
+            ISessionRepo sessionRepository)
         {
-            var EntityType = typeof(TEntity);
+            _dbContext = dbContext;
+            SessionRepo = sessionRepository;
+        }
 
-            if (_repositories.TryGetValue(EntityType, out var Repo)) return (IGenericRepo<TEntity>)Repo;
 
-            var NewRepo = new GenericRepo<TEntity>(_dbContext);
-            _repositories[EntityType] = NewRepo;
-            return NewRepo;
+        public IGenericRepo<TEntity> GetRepository<TEntity>() where TEntity : BaseEntity
+        {
+            var typeName = typeof(TEntity).Name;
+            if (repositories.TryGetValue(typeName, out object? value))
+                return (IGenericRepo<TEntity>)value;
+            var Repo = new GenericRepo<TEntity>(_dbContext);
+            repositories[typeName] = Repo;
+            return Repo;
         }
 
         public int SaveChanges()
-        {
-            return _dbContext.SaveChanges();
-        }
+        => _dbContext.SaveChanges();
     }
 }

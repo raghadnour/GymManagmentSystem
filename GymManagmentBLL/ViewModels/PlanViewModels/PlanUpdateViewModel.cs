@@ -9,7 +9,7 @@ namespace GymManagmentBLL.ViewModels.PlanViewModels
 {
     public class PlanUpdateViewModel
     {
-        public string Name { get; set; } = null!;
+        public string PlanName { get; set; } = null!;
 
 
         [Required(ErrorMessage = "Plan Description is required.")]

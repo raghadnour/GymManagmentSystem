@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace GymManagmentDAL.Repositories.Interfaces
 {
-    public interface IGenericRepo<TEntity> where TEntity : BaseEntity , new()
+    public interface IGenericRepo<TEntity> where TEntity : BaseEntity 
     {
         void Add(TEntity entity);
         void Update(TEntity entity);
