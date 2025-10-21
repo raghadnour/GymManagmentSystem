@@ -55,7 +55,7 @@ namespace GymManagmentBLL.Service.Classes
             var Member = Repo.GetById(MemberId);
             if (Member is null) return false;
             var sessionIds = _unitOfWork.GetRepository<MemberSession>().GetAll(
-               b => b.MemberId == MemberId).Select(S => S.SessionId); // 1 5 8
+               b => b.MemberId == MemberId).Select(S => S.SessionId);
 
             var hasFutureSessions = _unitOfWork.GetRepository<Session>()
                 .GetAll(S => sessionIds.Contains(S.Id) && S.StartTime > DateTime.Now).Any();
