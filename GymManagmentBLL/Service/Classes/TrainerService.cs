@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
+using GymManagementBLL.ViewModels.TrainerViewModels;
 using GymManagmentBLL.Service.Interfaces;
-using GymManagmentBLL.ViewModels.TrainerViewModels;
 using GymManagmentDAL.Entities;
 using GymManagmentDAL.Repositories.Interfaces;
 using System;
@@ -42,28 +42,28 @@ namespace GymManagmentBLL.Service.Classes
                 return false;
             }
         }
-        public IEnumerable<TrainersViewModel> GetAllTrainers()
+        public IEnumerable<TrainerViewModel> GetAllTrainers()
         {
             var Trainers = _unitOfWork.GetRepository<Trainer>().GetAll();
             if (Trainers is null || !Trainers.Any()) return [];
 
-            var mappedTrainers = _mapper.Map<IEnumerable<Trainer>, IEnumerable<TrainersViewModel>>(Trainers);
+            var mappedTrainers = _mapper.Map<IEnumerable<Trainer>, IEnumerable<TrainerViewModel>>(Trainers);
             return mappedTrainers;
         }
-        public TrainersViewModel? GetTrainerDetails(int trainerId)
+        public TrainerViewModel? GetTrainerDetails(int trainerId)
         {
             var Trainer = _unitOfWork.GetRepository<Trainer>().GetById(trainerId);
             if (Trainer is null) return null;
 
-            var mappedTrainer = _mapper.Map<Trainer, TrainersViewModel>(Trainer);
+            var mappedTrainer = _mapper.Map<Trainer, TrainerViewModel>(Trainer);
             return mappedTrainer;
         }
-        public TrainerUpdateViewModel? GetTrainerToUpdate(int trainerId)
+        public TrainerToUpdateViewModel? GetTrainerToUpdate(int trainerId)
         {
             var Trainer = _unitOfWork.GetRepository<Trainer>().GetById(trainerId);
             if (Trainer is null) return null;
 
-            var mappedTrainer = _mapper.Map<Trainer, TrainerUpdateViewModel>(Trainer);
+            var mappedTrainer = _mapper.Map<Trainer, TrainerToUpdateViewModel>(Trainer);
             return mappedTrainer;
 
 
@@ -78,7 +78,7 @@ namespace GymManagmentBLL.Service.Classes
             return _unitOfWork.SaveChanges() > 0;
 
         }
-        public bool UpdateTrainerDetails(int trainerId , TrainerUpdateViewModel updatedTrainer)
+        public bool UpdateTrainerDetails(int trainerId, TrainerToUpdateViewModel updatedTrainer)
         {
             var emailExist = _unitOfWork.GetRepository<Member>().GetAll(
                 m => m.Email == updatedTrainer.Email && m.Id != trainerId);

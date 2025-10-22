@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
+using GymManagementBLL.ViewModels.TrainerViewModels;
 using GymManagementSystemBLL.ViewModels.SessionViewModels;
 using GymManagmentBLL.ViewModels.MemberViewModels;
 using GymManagmentBLL.ViewModels.PlanViewModels;
 using GymManagmentBLL.ViewModels.SessionViewModels;
-using GymManagmentBLL.ViewModels.TrainerViewModels;
 using GymManagmentDAL.Entities;
 using System;
 using System.Collections.Generic;
@@ -34,16 +34,16 @@ namespace GymManagmentBLL
                     Street = src.Street,
                     City = src.City
                 }));
-            CreateMap<Trainer, TrainersViewModel>()
+            CreateMap<Trainer, TrainerViewModel>()
                             .ForMember(dest => dest.Address,
                             opt => opt.MapFrom(src => $"{src.Address.BuildingNumber} - {src.Address.Street} - {src.Address.City}"));
 
-            CreateMap<Trainer, TrainerUpdateViewModel>()
+            CreateMap<Trainer, TrainerToUpdateViewModel>()
                 .ForMember(dist => dist.Street, opt => opt.MapFrom(src => src.Address.Street))
                 .ForMember(dist => dist.City, opt => opt.MapFrom(src => src.Address.City))
                 .ForMember(dist => dist.BuildingNumber, opt => opt.MapFrom(src => src.Address.BuildingNumber));
 
-            CreateMap<TrainerUpdateViewModel, Trainer>()
+            CreateMap<TrainerToUpdateViewModel, Trainer>()
             .ForMember(dest => dest.Name, opt => opt.Ignore())
             .AfterMap((src, dest) =>
             {
