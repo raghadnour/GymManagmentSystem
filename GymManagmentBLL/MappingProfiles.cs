@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using GymManagementBLL.ViewModels.SessionViewModels;
 using GymManagementBLL.ViewModels.TrainerViewModels;
 using GymManagementSystemBLL.ViewModels.SessionViewModels;
 using GymManagmentBLL.ViewModels.MemberViewModels;
@@ -61,6 +62,10 @@ namespace GymManagmentBLL
                         .ForMember(dest => dest.TrainerName, opt => opt.MapFrom(src => src.SessionTrainer.Name))
                         .ForMember(dest => dest.AvailableSlots, opt => opt.Ignore()); // Will Be Calculated After Map
             CreateMap<UpdateSessionViewModel, Session>().ReverseMap();
+
+            CreateMap<Trainer, TrainerSelectViewModel>();
+            CreateMap<Category, CategorySelectViewModel>()
+                .ForMember(dist => dist.Name, opt => opt.MapFrom(src => src.CategoryName));
 
         }
         private void MapMember()

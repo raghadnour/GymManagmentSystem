@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using GymManagementBLL.ViewModels.SessionViewModels;
 using GymManagementSystemBLL.ViewModels.SessionViewModels;
 using GymManagmentBLL.Service.Interfaces;
 using GymManagmentBLL.ViewModels.SessionViewModels;
@@ -113,6 +114,17 @@ namespace GymManagmentBLL.Service.Classes
             {
                 return false;
             }
+        }
+        public IEnumerable<TrainerSelectViewModel> GetTrainersForDropDown()
+        {
+            var trainers = _unitOfWork.GetRepository<Trainer>().GetAll();
+            return _mapper.Map<IEnumerable<TrainerSelectViewModel>>(trainers);
+        }
+
+        public IEnumerable<CategorySelectViewModel> GetCategoriesForDropDown()
+        {
+            var categories = _unitOfWork.GetRepository<Category>().GetAll();
+            return _mapper.Map<IEnumerable<CategorySelectViewModel>>(categories);
         }
 
         #region Helper Methods
