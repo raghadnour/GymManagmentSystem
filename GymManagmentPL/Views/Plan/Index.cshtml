@@ -1,4 +1,8 @@
 ﻿@model IEnumerable<PlanViewModel>
+@{
+    ViewData["Title"] = "Plans";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
 
 @if (TempData["SuccessMessage"] is not null)
 {
