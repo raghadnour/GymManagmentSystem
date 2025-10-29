@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using GymManagmentBLL.Service.AttachmentService.Interface;
 using GymManagmentBLL.Service.Interfaces;
 using GymManagmentBLL.ViewModels.MemberViewModels;
 using GymManagmentDAL.Entities;
@@ -15,6 +16,7 @@ namespace GymManagmentBLL.Service.Classes
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly IAttachmentService _attachmentService;
 
         //private readonly IGenericRepo<Member> _memberRepo;
         //private readonly IGenericRepo<Membership> _membershipRepo;
@@ -22,10 +24,11 @@ namespace GymManagmentBLL.Service.Classes
         //private readonly IGenericRepo<HealthRecord> _healthRecordRepo;
         //private readonly IGenericRepo<MemberSession> _memberSessionRepo;
 
-        public MemberService(IUnitOfWork unitOfWork , IMapper mapper)
+        public MemberService(IUnitOfWork unitOfWork , IMapper mapper ,IAttachmentService attachmentService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _attachmentService = attachmentService;
         }
 
         public bool CreateMember(CreateMemberViewModel createMemberViewModel)
@@ -38,9 +41,22 @@ namespace GymManagmentBLL.Service.Classes
                     return false;
                 if (IsPhoneExists(createMemberViewModel.Phone))
                     return false;
+                var photoFileName = _attachmentService.Upload("members", createMemberViewModel.Photo);
+                if(string.IsNullOrEmpty(photoFileName) ) return false;
                 var member = _mapper.Map<Member>(createMemberViewModel);
+                member.Photo = photoFileName;
                 Repo.Add(member);
-                return _unitOfWork.SaveChanges() > 0;
+                bool iscreated = _unitOfWork.SaveChanges() > 0;
+                if (iscreated)
+                {
+                    
+                    return iscreated;
+                }
+                else
+                {
+                    _attachmentService.Delete("members", photoFileName);
+                    return false;
+                }
             }
             catch
             {
@@ -72,7 +88,16 @@ namespace GymManagmentBLL.Service.Classes
                         _unitOfWork.GetRepository<Membership>().Delete(membership);
                 }
                 _unitOfWork.GetRepository<Member>().Delete(Member);
-                return _unitOfWork.SaveChanges() > 0;
+                bool isDeleted = _unitOfWork.SaveChanges() > 0;
+                if (isDeleted)
+                {
+                    _attachmentService.Delete("members", Member.Photo);
+                    return isDeleted;
+                }
+                else
+                {
+                    return isDeleted;
+                }
             }
             catch
             {

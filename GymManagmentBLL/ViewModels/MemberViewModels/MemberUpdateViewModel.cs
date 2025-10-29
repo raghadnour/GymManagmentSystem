@@ -10,7 +10,7 @@ namespace GymManagmentBLL.ViewModels.MemberViewModels
     public class MemberUpdateViewModel
     {
         public string Name { get; set; } = null!;
-        public string? Photo { get; set; }
+        public string Photo { get; set; } = null!;
 
         [Required(ErrorMessage = "Email is Required")]
         [StringLength(maximumLength: 100, MinimumLength = 5, ErrorMessage = "The Email lenght must be between 5 and 100 charactars")]

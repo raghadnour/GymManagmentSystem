@@ -12,7 +12,7 @@ namespace GymManagmentBLL.ViewModels.MemberViewModels
         public string Name { get; set; } =null!;
         public string Email { get; set; } = null!;
         public string Phone { get; set; } = null!;
-        public string? Photo { get; set; }
+        public string Photo { get; set; } = null!;
         public string Gender { get; set; } = null!;
 
         #region Get Member Details 
