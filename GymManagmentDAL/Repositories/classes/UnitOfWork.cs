@@ -13,17 +13,19 @@ namespace GymManagmentDAL.Repositories.classes
     {
         public ISessionRepo SessionRepo { get; }
         public IMemberShipRepo MemberShipRepo { get; }
+        public IMemberSessionRepo MemberSessionRepo { get; }
 
 
         private readonly Dictionary<string, object> repositories = [];
         private readonly GymDbContext _dbContext;
 
         public UnitOfWork(GymDbContext dbContext,
-            ISessionRepo sessionRepository , IMemberShipRepo memberShipRepo)
+            ISessionRepo sessionRepository , IMemberShipRepo memberShipRepo , IMemberSessionRepo memberSessionRepo)
         {
             _dbContext = dbContext;
             SessionRepo = sessionRepository;
             MemberShipRepo = memberShipRepo;
+            MemberSessionRepo = memberSessionRepo;
         }
 
 
