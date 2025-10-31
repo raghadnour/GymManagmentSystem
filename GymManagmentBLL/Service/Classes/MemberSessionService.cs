@@ -32,7 +32,7 @@ namespace GymManagmentBLL.Service.Classes
             try
             {
                 var sessions = _unitOfWork.SessionRepo.GetById(model.SessionId);
-                var member = _unitOfWork.GetRepository<Member>().GetById(model.SessionId);
+                var member = _unitOfWork.GetRepository<Member>().GetById(model.MemberId);
 
                 if (sessions is null || member is null)
                     return false;

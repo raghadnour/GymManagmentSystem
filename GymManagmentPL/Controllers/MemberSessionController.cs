@@ -28,6 +28,7 @@ namespace GymManagmentPL.Controllers
                 TempData["ErrorMessage"] = "Invalid Session Id";
                 return RedirectToAction(nameof(Index));
             }
+            ViewBag.SessionId = sessionId;
             var members = _memberSessionService.GetMembersForUpcomingSessions(sessionId);
             return View(members);
         }
@@ -64,13 +65,10 @@ namespace GymManagmentPL.Controllers
         [HttpPost]
         public ActionResult Create(BookingSessionViewModel model)
         {
-            if (model.SessionId == 0 && ViewBag.SessionId != null)
-                model.SessionId = (int)ViewBag.SessionId;
-
             if (!ModelState.IsValid)
             {
                 LoadMemberDropDown();
-                ViewBag.SessionId = model.SessionId;
+                ViewBag.SessionId = model.SessionId; 
                 return View(model);
             }
 
@@ -80,7 +78,7 @@ namespace GymManagmentPL.Controllers
             {
                 ModelState.AddModelError("", "Failed to create booking. Please try again.");
                 LoadMemberDropDown();
-                ViewBag.SessionId = model.SessionId; 
+                ViewBag.SessionId = model.SessionId;
                 return View(model);
             }
 
