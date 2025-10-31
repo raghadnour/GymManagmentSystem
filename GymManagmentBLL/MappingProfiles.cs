@@ -2,6 +2,7 @@
 using GymManagementBLL.ViewModels.SessionViewModels;
 using GymManagementBLL.ViewModels.TrainerViewModels;
 using GymManagementSystemBLL.ViewModels.SessionViewModels;
+using GymManagmentBLL.ViewModels.MemberShipViewModels;
 using GymManagmentBLL.ViewModels.MemberViewModels;
 using GymManagmentBLL.ViewModels.PlanViewModels;
 using GymManagmentBLL.ViewModels.SessionViewModels;
@@ -20,6 +21,7 @@ namespace GymManagmentBLL
 
         public MappingProfile()
         {
+            MapMembership();
             MapTrainer();
             MapSession();
             MapMember();
@@ -67,6 +69,18 @@ namespace GymManagmentBLL
             CreateMap<Category, CategorySelectViewModel>()
                 .ForMember(dist => dist.Name, opt => opt.MapFrom(src => src.CategoryName));
 
+        }
+        private void MapMembership()
+        {
+            CreateMap<CreateMemberShipViewModel, Membership>();
+            CreateMap<Membership, MemberShipViewModel>()
+                .ForMember(dest => dest.MemberName, opt => opt.MapFrom(src => src.Member.Name))
+                .ForMember(dest => dest.PlanName, opt => opt.MapFrom(src => src.Plan.Name))
+                .ForMember(dest => dest.StartDate, opt => opt.MapFrom(src => src.CreatedAt))
+                .ForMember(dest => dest.EndDate, opt => opt.MapFrom(src => src.EndDate));
+
+            CreateMap<Member, MemberSelectViewModel>();
+            CreateMap<Plan, PlanSelectViewModel>();
         }
         private void MapMember()
         {
